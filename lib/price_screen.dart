@@ -62,7 +62,7 @@ class _PriceScreenState extends State<PriceScreen> {
       children: pickerMenuList,
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        _selectedCurrency = currenciesList[selectedIndex];
       },
     );
   }

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'coin_data.dart';
+import 'utilities/coin_data.dart';
 import 'components/conversion_card.dart';
 import 'services/networking.dart';
 
@@ -98,27 +98,43 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
+  Center _buildErrorMessage() {
+    return Center(
+      child: Text(
+        'Sorry :/. Something went wrong!',
+        style: TextStyle(fontSize: 20.0),
+      ),
+    );
+  }
+
   void _updateConversionPrice() async {
     setState(() {
       centerScreenWidgets = _buildLoadingWidget();
     });
 
-    double conversionPriceForBTC = await NetworkingServices(coinType: 'BTC')
-        .getConversionPriceFor(_selectedCurrency);
+    try {
+      double conversionPriceForBTC =
+          await NetworkingServices.getConversionPriceFor(
+              coinType: 'BTC', currencyLabel: _selectedCurrency);
 
-    double conversionPriceForETH = await NetworkingServices(coinType: 'ETH')
-        .getConversionPriceFor(_selectedCurrency);
+      double conversionPriceForETH =
+          await NetworkingServices.getConversionPriceFor(
+              coinType: 'ETH', currencyLabel: _selectedCurrency);
 
-    double conversionPriceForLTC = await NetworkingServices(coinType: 'LTC')
-        .getConversionPriceFor(_selectedCurrency);
+      double conversionPriceForLTC =
+          await NetworkingServices.getConversionPriceFor(
+              coinType: 'LTC', currencyLabel: _selectedCurrency);
 
-    setState(() {
-      _conversionPriceForBTC = conversionPriceForBTC.toStringAsFixed(2);
-      _conversionPriceForETH = conversionPriceForETH.toStringAsFixed(2);
-      _conversionPriceForLTC = conversionPriceForLTC.toStringAsFixed(2);
+      setState(() {
+        _conversionPriceForBTC = conversionPriceForBTC.toStringAsFixed(2);
+        _conversionPriceForETH = conversionPriceForETH.toStringAsFixed(2);
+        _conversionPriceForLTC = conversionPriceForLTC.toStringAsFixed(2);
 
-      centerScreenWidgets = _buildConversionCardColumn();
-    });
+        centerScreenWidgets = _buildConversionCardColumn();
+      });
+    } catch (e) {
+      centerScreenWidgets = _buildErrorMessage();
+    }
   }
 
   @override
